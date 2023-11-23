@@ -1,0 +1,96 @@
+﻿@page "/Book"
+    <PageTitle>病床預約</PageTitle>
+
+
+    <h3>病床預約</h3>
+    <br>
+<table>
+    <thead>
+        <tr>
+            <td style="width: 15%;"><label>請選擇日期：</label></td>
+            <td colspan=2 style="width: 85%;"><input type="date" @bind="selectedDate" @onfocus="ClearDate" min="@DateTime.Today.ToString("yyyy-MM-dd")" /></td>
+        </tr>
+
+        @if (selectedDate.HasValue)
+        {
+            <tr>
+                <td style="width: 15%;"><label>請選擇時段：</label></td>
+                <td colspan=2>
+                    <form>
+                        <table>
+                            <tbody>
+                                @for (int i = 0; i < 16; i++)
+                                {
+                                    // 計算每個時段的開始時間和結束時間
+                                    var startTime = new DateTime(1, 1, 1, 9, 0, 0).AddMinutes(i * 30);
+                                    var endTime = startTime.AddMinutes(30);
+
+                                    <tr>
+                                        <td>
+                                            <label>
+                                                <input type="radio" name="@($"timeslot_{i}")" value="@i" /> @startTime.ToString("HH:mm") ~ @endTime.ToString("HH:mm")
+                                            </label>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan=4 style="width: 15%;"><label>該時段可用病床：</label></td>
+                <td style="width: 15%;"><label>病床號</label></td>
+                <td style="width: 70%;"><label>病床狀態</label></td>
+            </tr>
+            <tr>
+                <td>A</td>
+                <td style="color:#548C00;">可預約</td>
+            </tr>
+            <tr>
+                <td>B</td>
+                <td style="color:#548C00;">可預約</td>
+            </tr>
+            <tr>
+                <td>C</td>
+                <td style="color:#548C00;">可預約</td>
+            </tr>
+        }
+        <br>
+        <button type="submit" class="btn1" @onclick="NavigateToNextPage1">儲存</button>
+
+
+    </thead>
+</table>
+
+@code{
+    private DateTime? selectedDate;
+
+    private void ClearDate()
+    {
+        if (selectedDate == DateTime.MinValue)
+        {
+            selectedDate = null;
+        }
+
+    }
+
+    string GetTimeslotLabel(int timeslot)
+    {
+        // 假設每個時段是半小時
+        int hour = timeslot / 2;
+        int minute = (timeslot % 2) * 30;
+
+        return $"{hour:D2}:{minute:D2}";
+    }
+
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
+
+    private void NavigateToNextPage1()
+    {
+        NavigationManager.NavigateTo("/check");
+    }
+}

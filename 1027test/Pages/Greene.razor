@@ -1,0 +1,135 @@
+﻿@page "/Greene"
+<PageTitle>更年期 Greene 量表</PageTitle>
+
+
+<h3>更年期 Greene 量表</h3>
+    請您根據最近一週的狀況選取
+<br>
+<table>
+    <thead>
+        <tr>
+            <th>症狀</th>
+            <th>完全沒有0</th>
+            <th>輕度1</th>
+            <th>中度2</th>
+            <th>重度3</th>
+            <th>分數</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var symptom in symptoms)
+        {
+            var currentSymptomId = symptom.SymptomId;
+            <tr>
+                <td>@symptom.SymptomName</td>
+                <td><input type="radio" name="@($"severity_{symptom.SymptomId}")" value="0" @onchange="@(e => { symptom.Severity = 0; StateHasChanged(); })" /></td>
+                <td><input type="radio" name="@($"severity_{symptom.SymptomId}")" value="1" @onchange="@(e => { symptom.Severity = 1; StateHasChanged(); })" /></td>
+                <td><input type="radio" name="@($"severity_{symptom.SymptomId}")" value="2" @onchange="@(e => { symptom.Severity = 2; StateHasChanged(); })" /></td>
+                <td><input type="radio" name="@($"severity_{symptom.SymptomId}")" value="3" @onchange="@(e => { symptom.Severity = 3; StateHasChanged(); })" /></td>
+
+
+
+                <td><strong>@GetSymptomScore(currentSymptomId)</strong></td>
+            </tr>
+
+            <tr></tr>
+        }
+    </tbody>
+
+    <tr>
+        <td colspan="6"><strong>總分: @CalculateTotalScore()</strong></td>
+    </tr>
+
+    <tr>
+        <td colspan="6"><strong>Anxiety (A) Scale (1-6): @CalculateSubScaleScore(symptoms, 1, 6)</strong></td>
+    </tr>
+    <tr>
+        <td colspan="6"><strong>Depression (D) Scale (7-11): @CalculateSubScaleScore(symptoms, 7, 11)</strong></td>
+    </tr>
+    <tr>
+        <td colspan="6"><strong>Psychological (P) Scale (1-11): @CalculateSubScaleScore(symptoms, 1, 11)</strong></td>
+    </tr>
+    <tr>
+        <td colspan="6"><strong>Somatic (S) Scale (12-18): @CalculateSubScaleScore(symptoms, 12, 18)</strong></td>
+    </tr>
+    <tr>
+        <td colspan="6"><strong>Vasomotor (V) Scale (19-20): @CalculateSubScaleScore(symptoms, 19, 20)</strong></td>
+    </tr>
+    <tr>
+        <td colspan="6"><strong>Sexual Dysfunction (S) Scale (21): @CalculateSubScaleScore(symptoms, 21, 21)</strong></td>
+    </tr>
+
+</table>
+
+<br />
+
+@if (CalculateTotalScore() < 60)
+{
+    <button class="btn btn-primary" @onclick="NavigateToNextPage">下一步</button>
+}
+else
+{
+    <button class="btn btn-danger" @onclick="ShowPopup">無法預約</button>
+}
+
+@code {
+    List<SymptomModel> symptoms = new List<SymptomModel>
+{
+        new SymptomModel { SymptomId = 1, SymptomName = "01、心跳變快或變明顯(怦怦跳)"},
+        new SymptomModel { SymptomId = 2, SymptomName = "02、覺得緊繃或緊張(神經質)"},
+        new SymptomModel { SymptomId = 3, SymptomName = "03、睡眠障礙"},
+        new SymptomModel { SymptomId = 4, SymptomName = "04、靜不下心、急躁" },
+        new SymptomModel { SymptomId = 5, SymptomName = "05、一陣恐慌、不安" },
+        new SymptomModel { SymptomId = 6, SymptomName = "06、注意力難以集中"},
+        new SymptomModel { SymptomId = 7, SymptomName = "07、覺得疲倦或缺乏元氣"},
+        new SymptomModel { SymptomId = 8, SymptomName = "08、對大多數事物失去興趣"},
+        new SymptomModel { SymptomId = 9, SymptomName = "09、覺得不快樂或憂鬱"},
+        new SymptomModel { SymptomId = 10, SymptomName = "10、容易掉淚或哭泣"},
+        new SymptomModel { SymptomId = 11, SymptomName = "11、易怒、容易生氣"},
+        new SymptomModel { SymptomId = 12, SymptomName = "12、覺得頭暈或是有快昏倒的感覺"},
+        new SymptomModel { SymptomId = 13, SymptomName = "13、頭部或身體覺得緊繃或有壓力"},
+        new SymptomModel { SymptomId = 14, SymptomName = "14、身體有些地方感覺麻麻的或有刺痛感"},
+        new SymptomModel { SymptomId = 15, SymptomName = "15、頭痛"},
+        new SymptomModel { SymptomId = 16, SymptomName = "16、肌肉關節痠痛"},
+        new SymptomModel { SymptomId = 17, SymptomName = "17、手或腳感覺變得遲鈍或較沒感覺" },
+        new SymptomModel { SymptomId = 18, SymptomName = "18、呼吸困難" },
+        new SymptomModel { SymptomId = 19, SymptomName = "19、熱潮紅(一陣熱一陣冷、臉紅或冒汗)"},
+        new SymptomModel { SymptomId = 20, SymptomName = "20、夜間流汗"},
+        new SymptomModel { SymptomId = 21, SymptomName = "21、對性失去興趣" }
+    };
+
+    int GetSymptomScore(int symptomId)
+    {
+        return symptoms.FirstOrDefault(s => s.SymptomId == symptomId)?.Severity ?? 0;
+    }
+
+    int CalculateTotalScore()
+    {
+        return symptoms.Sum(s => s.Severity);
+    }
+
+
+
+    int CalculateSubScaleScore(List<SymptomModel> symptoms, int startId, int endId)
+    {
+        var subScaleSymptoms = symptoms.Where(s => s.SymptomId >= startId && s.SymptomId <= endId);
+        return subScaleSymptoms.Sum(s => s.Severity);
+    }
+
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
+
+    private void NavigateToNextPage()
+    {
+        NavigationManager.NavigateTo("/book");
+    }
+
+    @inject IJSRuntime JSRuntime
+
+    private async Task ShowPopup()
+    {
+        await JSRuntime.InvokeVoidAsync("showPopup", "無法預約", "總分大於等於60，無法預約。");
+    }
+}

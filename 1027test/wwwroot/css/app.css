@@ -100,3 +100,39 @@ a, .btn-link {
         content: var(--blazor-load-percentage-text, "Loading");
     }
 
+
+/* styles/app.css */
+.form-control {
+    width:150px;
+}
+
+
+.header {
+    background-color: #E0E0E0; /* 背景顏色 */
+    color: #5B5B5B; /* 文字顏色 */
+    text-align: center;
+    padding: 20px;
+    font-size: 24px;
+}
+
+.btn1 {
+    background-color: #0a0a23;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+th {
+    background-color: #f2f2f2;
+}
